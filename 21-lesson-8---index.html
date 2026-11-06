@@ -1,0 +1,18 @@
+<!doctype html><meta charset="utf-8"><style>body{margin:0;background:#111}canvas{display:block}</style><canvas width="1920" height="1080"></canvas><script>
+const g=document.querySelector('canvas').getContext('2d'),im=new Image(),E=x=>{x=Math.max(0,Math.min(1,x));return x*x*(3-2*x)};window.ready=new Promise(r=>{im.onload=r;im.src='assets/时间线.png'});
+function text(s,x,y,size=48,color='#eee'){g.fillStyle=color;g.textAlign='center';g.font=`600 ${size}px "PingFang SC"`;g.fillText(s,x,y)}
+function clip(x,y,w,src,sw,label,white=false){g.save();g.beginPath();g.roundRect(x,y,w,174,12);g.clip();g.fillStyle='#333';g.fillRect(x,y,w,174);g.drawImage(im,src,0,sw,im.height,x,y+40,w,134);g.fillStyle=white?'#eee':'#333';g.fillRect(x,y,w,40);text(label,x+w/2,y+28,23,white?'#111':'#eee');g.restore();g.strokeStyle=white?'#fff':'#888';g.lineWidth=white?3:1;g.beginPath();g.roundRect(x,y,w,174,12);g.stroke()}
+window.seek=t=>{let bg=g.createLinearGradient(0,0,1920,1080);bg.addColorStop(0,'#242424');bg.addColorStop(1,'#090909');g.fillStyle=bg;g.fillRect(0,0,1920,1080);
+text(t<3.6?'切开这一段':t<5.4?'移走旧片段':t<10?'按这句台词，生成新视频':t<12.5?'放入新片段':'替换完成',960,155,66);
+const x=180,y=580,w=1560,L=540,M=440,R=580,a=x+L,b=a+M,cut1=E((t-1)/.6),cut2=E((t-2.2)/.6),remove=E((t-3.6)/1.2),insert=E((t-10)/2);
+g.fillStyle='#1a1a1a';g.beginPath();g.roundRect(150,523,1620,275,20);g.fill();
+g.strokeStyle='#555';g.lineWidth=1;for(let i=0;i<=30;i++){let xx=x+i*w/30;g.beginPath();g.moveTo(xx,550);g.lineTo(xx,562);g.stroke();if(i%5===0)text('00:'+String(i).padStart(2,'0'),xx,541,19,'#888')}
+clip(x,y,L,0,980,'前段');clip(b,y,R,1780,1050,'后段');
+if(remove<1){g.save();g.globalAlpha=1-E((remove-.65)/.35);clip(a,y-remove*235,M,980,800,'原片段');g.restore()}
+if(remove>0){g.save();g.globalAlpha=remove*(1-insert);g.setLineDash([10,9]);g.strokeStyle='#aaa';g.lineWidth=2;g.strokeRect(a+3,y+3,M-6,168);g.setLineDash([]);g.restore()}
+for(let [xx,p] of [[a,cut1],[b,cut2]]){if(t<4.4){g.save();g.globalAlpha=1-E((t-3.8)/.6);g.strokeStyle='#fff';g.lineWidth=5;g.beginPath();g.moveTo(xx,y-15);g.lineTo(xx,y-15+204*p);g.stroke();if(p>0)text('✂',xx,y-39,44);g.restore()}}
+let gen=E((t-5.2)/.5)*(1-E((t-9.7)/.5));if(gen>0){g.save();g.globalAlpha=gen;g.fillStyle='#282828';g.strokeStyle='#777';g.lineWidth=2;g.beginPath();g.roundRect(220,285,500,174,14);g.fill();g.stroke();text('这句台词',470,342,36);text('保持人物与场景，调整语气',470,398,25,'#bbb');let q=E((t-6)/1);g.strokeStyle='#eee';g.lineWidth=3;g.beginPath();g.moveTo(750,372);g.lineTo(750+150*q,372);g.stroke();if(q>.95){g.beginPath();g.moveTo(885,360);g.lineTo(900,372);g.lineTo(885,384);g.stroke()}g.fillStyle='#222';g.beginPath();g.roundRect(930,285,440,174,12);g.fill();text('生成视频',1150,356,34);g.fillStyle='#555';g.fillRect(980,395,340,5);g.fillStyle='#eee';g.fillRect(980,395,340*E((t-6.5)/2.2),5);g.restore()}
+let reveal=E((t-8.7)/.7);if(reveal>0){g.save();g.globalAlpha=reveal;let nx=a+210*(1-insert),ny=285+(y-285)*insert;g.shadowColor='#000';g.shadowBlur=28*(1-insert);clip(nx,ny,M,980,800,'新片段',true);g.restore()}
+if(t>=12){let p=E((t-12)/1.7);g.strokeStyle='#fff';g.lineWidth=2;g.beginPath();g.moveTo(x+p*w,y-18);g.lineTo(x+p*w,y+192);g.stroke()}
+};
+</script>

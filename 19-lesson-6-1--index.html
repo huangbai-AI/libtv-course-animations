@@ -1,0 +1,10 @@
+<!doctype html><meta charset="utf-8"><style>body{margin:0;background:#080808}canvas{display:block}</style><canvas width="1920" height="1080"></canvas><script>
+const g=document.querySelector('canvas').getContext('2d'),cl=x=>Math.max(0,Math.min(1,x)),E=x=>{x=cl(x);return x*x*(3-2*x)},frames=[[],[],[]];
+function tx(s,x,y,z=40,c='#eee'){g.fillStyle=c;g.textAlign='center';g.font=`600 ${z}px "PingFang SC"`;g.fillText(s,x,y)}
+function line(p,c='#ddd',w=3){g.beginPath();p.forEach((v,i)=>i?g.lineTo(...v):g.moveTo(...v));g.strokeStyle=c;g.lineWidth=w;g.lineCap='round';g.stroke()}
+window.ready=Promise.all(['role','camera','action'].flatMap((n,j)=>Array.from({length:j===2?105:90},(_,i)=>new Promise((resolve,reject)=>{let im=new Image();im.onload=resolve;im.onerror=reject;im.src=`assets/${n}_${String(i+1).padStart(3,'0')}.jpg`;frames[j].push(im)}))));
+window.seek=t=>{let bg=g.createRadialGradient(960,420,0,960,500,1200);bg.addColorStop(0,'#242424');bg.addColorStop(1,'#080808');g.fillStyle=bg;g.fillRect(0,0,1920,1080);for(let x=35;x<1920;x+=60)for(let y=35;y<1080;y+=60){g.fillStyle='#ffffff0a';g.fillRect(x,y,1.5,1.5)}tx('让视频更有表现力',960,160,66);
+for(let i=0;i<2;i++){let p=E((t-(3.1+i*3.2))/.9),x=630+i*550;if(p>0){g.save();g.shadowBlur=14;g.shadowColor='#fff';line([[x,500],[x+90*p,500]],'#eee',4);g.restore()}}
+const titles=['角色更鲜明','镜头更有感觉','动作更精准'],sub=['辨识度','表现力','准确度'];for(let i=0;i<3;i++){let x=180+i*550,p=E((t-i*3.2)/.8),u=Math.max(0,t-i*3.2),lit=E(u/.5)*(i===2?1:1-E((u-3.2)/.6));g.save();g.globalAlpha=p;g.translate(0,35*(1-p));g.beginPath();g.roundRect(x,235,450,565,25);g.fillStyle='#141414';g.fill();g.strokeStyle='#666';g.lineWidth=2;g.stroke();g.save();g.globalAlpha*=lit;g.shadowColor='#fff';g.shadowBlur=18;g.strokeStyle='#eee';g.lineWidth=3;g.stroke();g.restore();let cx=x+225,im=frames[i][Math.min(frames[i].length-1,Math.floor(u*30))];if(im?.complete){g.save();g.beginPath();g.roundRect(cx-117,255,234,416,12);g.clip();g.drawImage(im,cx-117,255,234,416);g.restore()}
+tx(titles[i],cx,730,42);tx(sub[i],cx,779,28,'#aaa');g.restore()}};
+</script>

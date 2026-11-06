@@ -1,0 +1,9 @@
+<!doctype html><meta charset="utf-8"><style>body{margin:0;background:#080808}canvas{display:block}</style><canvas width="1920" height="1080"></canvas><script>
+const g=document.querySelector('canvas').getContext('2d'),E=x=>{x=Math.max(0,Math.min(1,x));return x*x*(3-2*x)},im=[];
+window.ready=Promise.all(['送药','蒙眼','识破'].map((n,i)=>new Promise((r,j)=>{im[i]=new Image();im[i].onload=r;im[i].onerror=j;im[i].src=`assets/${n}.png`})));
+function txt(s,x,y,size,c='#f5f5f5'){g.fillStyle=c;g.font=`600 ${size}px "PingFang SC"`;g.textAlign='left';g.fillText(s,x,y)}
+window.seek=t=>{let b=g.createLinearGradient(0,0,1920,1080);b.addColorStop(0,'#202020');b.addColorStop(.5,'#101010');b.addColorStop(1,'#080808');g.fillStyle=b;g.fillRect(0,0,1920,1080);txt('悬念，从一次误判开始',830,215,34,'#aaa');
+const starts=[0,2.5,5.7],a=E((t-2.5)/.65),z=E((t-5.7)/.65),weights=[1-a,a*(1-z),z];
+for(let i=0;i<3;i++){let p=weights[i];if(!p)continue;g.save();g.globalAlpha=p;let u=Math.max(0,t-starts[i]),s=1+.014*E(u/3),h=750*s,w=h*im[i].width/im[i].height,x=320-w/2+170,y=460-h/2;g.shadowColor='#0009';g.shadowBlur=50;g.drawImage(im[i],x,y,w,h);g.shadowBlur=0;let dx=20*(1-E(u/.65));g.translate(dx,0);txt(['剧情起点','女主的判断','预期被打破'][i],830,340,32,'#aaa');let lines=[['送药'],['以为王爷','看不见'],['当场','被识破']][i];lines.forEach((s,j)=>txt(s,820,460+j*115,96));g.restore()}
+g.strokeStyle='#444';g.lineWidth=2;g.beginPath();g.moveTo(830,650);g.lineTo(1650,650);g.stroke();let progress=E(t/8.4);g.strokeStyle='#ddd';g.beginPath();g.moveTo(830,650);g.lineTo(830+820*progress,650);g.stroke();let q=E((t-8.4)/.8);g.save();g.globalAlpha=q;txt('他究竟看不看得见？',830,755,47);g.restore()};
+</script>

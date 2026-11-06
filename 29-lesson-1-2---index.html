@@ -1,0 +1,33 @@
+<!doctype html><meta charset="utf-8"><style>body{margin:0;background:#f6f3e9}canvas{display:block}</style><canvas width="1920" height="1080"></canvas><script>
+const g=document.querySelector('canvas').getContext('2d'),W=1920,H=1080,I={};
+const C=x=>Math.max(0,Math.min(1,x)),E=x=>1-(1-C(x))**4,S=x=>{x=C(x);return x*x*(3-2*x)},M=(a,b,t)=>a+(b-a)*t;
+const ink='#202025',paper='#f6f3e9',purple='#7554e8',lime='#d9f261',orange='#ff8256';
+window.ready=Promise.all(['fx','drama','mv'].flatMap(n=>Array.from({length:60},(_,j)=>new Promise((r,reject)=>{let im=new Image;im.onload=()=>{I[n+j]=im;r()};im.onerror=reject;im.src=`assets/${n}/${String(j+1).padStart(4,'0')}.jpg`}))));
+function round(x,y,w,h,r,c){if(w<=0||h<=0)return;g.fillStyle=c;g.beginPath();g.roundRect(x,y,w,h,Math.min(r,w/2,h/2));g.fill()}
+function rect(x,y,w,h,c){if(w>=W||h>=H){g.fillStyle=c;g.fillRect(x,y,w,h);return}let r=w<70||h<45?Math.min(w,h)/2:38;if(w<600&&w>100&&h>100)round(x+10,y+12,w,h,r,'#20202520');round(x,y,w,h,r,c)}
+function txt(s,x,y,size=120,c=ink,align='left'){g.fillStyle=c;g.font=`900 ${size}px "PingFang SC"`;g.textAlign=align;if(size>=100){g.fillStyle='#20202526';g.fillText(s,x+7,y+9);g.fillStyle=c}g.fillText(s,x,y)}
+function tr(x,y,a,fn){g.save();g.translate(x,y);g.rotate(a);fn();g.restore()}
+function circle(x,y,r,c){if(r>70){g.fillStyle='#20202525';g.beginPath();g.arc(x+11,y+13,r,0,7);g.fill()}g.fillStyle=c;g.beginPath();g.arc(x,y,Math.max(0,r),0,7);g.fill()}
+function geometry(x,y,r,a,c){tr(x,y,a,()=>{
+ g.save();g.lineCap='round';g.strokeStyle=c;g.shadowColor='#20202524';g.shadowOffsetX=8;g.shadowOffsetY=10;g.shadowBlur=0;
+ g.lineWidth=r*.27;g.beginPath();g.arc(0,0,r*.65,-Math.PI*.77,Math.PI*.73);g.stroke();
+ g.shadowColor='transparent';g.lineWidth=r*.065;g.beginPath();g.arc(0,0,r*.96,-Math.PI*.65,Math.PI*.14);g.stroke();
+ g.fillStyle=c;g.beginPath();g.arc(-r*.86,r*.43,r*.10,0,Math.PI*2);g.fill();
+ g.restore();
+ 
+})}
+function line(x,y,xx,yy,c=ink,w=12){g.strokeStyle=c;g.lineWidth=w;g.lineCap='round';g.beginPath();g.moveTo(x,y);g.lineTo(xx,yy);g.stroke()}
+function arrow(x,y,l,c=ink){if(l<8)return;g.save();g.strokeStyle=c;g.lineWidth=18;g.lineCap='round';g.lineJoin='round';g.beginPath();g.moveTo(x,y);g.lineTo(x+l-8,y);g.stroke();g.beginPath();g.moveTo(x+l-43,y-36);g.quadraticCurveTo(x+l-25,y-12,x+l,y);g.quadraticCurveTo(x+l-25,y+12,x+l-43,y+36);g.stroke();g.restore()}
+function clip(x,y,w,h,fn){g.save();g.beginPath();g.rect(x,y,w,h);g.clip();fn();g.restore()}
+function photo(im,x,y,w,h){let k=Math.min(w/im.width,h/im.height);g.drawImage(im,x+(w-im.width*k)/2,y+(h-im.height*k)/2,im.width*k,im.height*k)}
+function scene(t,id){
+if(id===0){rect(0,0,W,H,paper);let p=E(t/.65);rect(0,0,28,H,purple);clip(100,130,1700,260,()=>txt('从一个',125,335+260*(1-p),190));let a=E((t-.25)/.65);clip(95,370,1740,330,()=>txt('想法开始',115-1100*(1-a),650,260));geometry(1550,520,180,E((t-.35)/.9)*.8,purple);let b=E((t-1)/.6);rect(120,760,1000*b,26,lime);txt('把想法，变成看得见的作品',125,900,55);for(let i=0;i<3;i++)circle(1640+i*65,875,12,ink)}
+if(id===1){rect(0,0,W,H,purple);let a=E(t/.6);txt('让创意动起来',110,190,110,paper);let colors=[lime,paper,orange],names=['图片','视频','声音'];for(let j=0;j<3;j++){let p=E((t-j*.13)/.6),x=340+j*620,y=570+600*(1-p);tr(x,y,(1-p)*(j%2?.7:-.7),()=>{if(j===0){rect(-185,-180,370,370,colors[j]);circle(80,-80,38,purple);g.fillStyle=purple;g.beginPath();g.moveTo(-155,140);g.bezierCurveTo(-125,85,-80,-30,-35,-30);g.bezierCurveTo(4,-30,28,85,60,85);g.bezierCurveTo(82,85,95,35,115,35);g.bezierCurveTo(140,35,158,105,170,140);g.closePath();g.fill()}if(j===1){circle(0,0,210,colors[j]);g.fillStyle=purple;g.beginPath();g.moveTo(-55,-63);g.arcTo(-55,-95,110,0,23);g.arcTo(110,0,-55,95,23);g.arcTo(-55,95,-55,-95,23);g.closePath();g.fill()}if(j===2){for(let k=0;k<7;k++){let h=70+130*(.5+.5*Math.sin(t*5+k*.85));rect(-180+k*55,-h/2,30,h,colors[j])}}txt(names[j],0,320,85,paper,'center')})} }
+if(id===2){rect(0,0,W,H,lime);let a=E(t/.55);rect(0,0,W,530,ink);clip(0,0,W,530,()=>{txt('工具讲解',110-1000*(1-a),330,215,paper);txt('第 2—6 节',1410,460,57,lime)});clip(0,530,W,550,()=>{txt('案例实战',790+1100*(1-a),875,215,ink);txt('第 7—10 节',120,1000,57,ink)});geometry(330,785,160,t*.25,purple);arrow(1440,185,270,lime);let p=E((t-.5)/.6);rect(100,405,780*p,12,purple);}
+if(id===3){rect(0,0,W,H,paper);let a=E(t/.6);txt('把方法用起来',110,190,110);let words=['画布','节点','Agent','Skill'];let xs=[140,580,1020,1450];for(let j=0;j<4;j++){let p=E((t-j*.13)/.55);tr(xs[j]+130,415+360*(1-p),(1-p)*.4,()=>{rect(-165,-110,330,190,[lime,purple,ink,orange][j]);txt(words[j],0,25,j>1?76:85,j===1||j===2?paper:ink,'center')})}let q=E((t-.65)/.65);arrow(130,740,430*q,purple);clip(620,610,1200,300,()=>txt('组合 · 尝试 · 创作',650+1250*(1-q),810,100));}
+if(id===4){let n=Math.min(2,Math.floor(t/.9)),u=t-n*.9,names=['创意玩法','短剧','音乐 MV'],colors=[orange,lime,purple];rect(0,0,W,H,colors[n]);txt(names[n],95,245,n===2?145:145,n===2?paper:ink);txt('案例实战',110,985,62,n===2?paper:ink);let im=I[['fx','drama','mv'][n]+Math.min(26,Math.floor(u*30))];let p=E(u/.24);let k=Math.min(1080/im.width,940/im.height),fw=im.width*k,fh=im.height*k,fx=1280-fw/2,fy=540-fh/2;clip(fx,fy,fw*p,fh,()=>{g.save();g.beginPath();g.roundRect(fx,fy,fw,fh,Math.min(38,fw*.06));g.clip();g.drawImage(im,fx,fy,fw,fh);g.restore()});geometry(340,620,170,t*.8,n===2?lime:purple);arrow(130,820,410,n===2?paper:ink)}
+if(id===5){rect(0,0,W,H,purple);let p=E(t/.6);clip(0,100,W,400,()=>txt('学会工具',105,410+400*(1-p),215,paper));let a=E((t-.18)/.65);clip(0,510,W,430,()=>txt('做出作品',655+1300*(1-a),850,215,lime));arrow(125,745,380*a,paper);geometry(1620,270,140,.2,paper);rect(110,990,1700,10,paper)}}
+const A=document.createElement('canvas'),B=document.createElement('canvas');A.width=B.width=W;A.height=B.height=H;
+function capture(t,id,c){g.setTransform(1,0,0,1,0,0);g.globalAlpha=1;scene(t,id);c.getContext('2d').drawImage(g.canvas,0,0)}
+window.seek=t=>{let cuts=[0,2.3,4.6,7.1,9.6,12.3],id=cuts.findLastIndex(c=>t>=c),u=t-cuts[id];if(id&&u<.32){capture(cuts[id]-cuts[id-1]-1/30,id-1,A);capture(u,id,B);g.drawImage(A,0,0);let p=E(u/.32);clip(0,0,W*p,H,()=>g.drawImage(B,0,0));rect(W*p-14,0,14,H,id%2?lime:purple)}else capture(u,id,B)};
+</script>

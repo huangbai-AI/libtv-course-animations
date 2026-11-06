@@ -1,0 +1,11 @@
+<!doctype html><meta charset="utf-8"><style>html,body{margin:0;background:#080808;overflow:hidden}canvas{display:block}</style><canvas width="1920" height="1080"></canvas><script>
+const c=document.querySelector('canvas'),g=c.getContext('2d');const imgs=Array.from({length:4},(_,i)=>{let a=new Image;a.src=`assets/${i}.png`;return a});window.ready=Promise.all(imgs.map(a=>new Promise(r=>{a.onload=r;if(a.complete)r()})));
+const names=['场景','人物','设计','道具'],groups=[[0],[1],[2],[3]],sub=['空间 · 光影','五官 · 服饰','排版 · 配色','材质 · 细节'];const ease=x=>1-Math.pow(1-Math.max(0,Math.min(1,x)),3);
+function text(s,x,y,size,color='#f6f6f6',weight=600){g.fillStyle=color;g.font=`${weight} ${size}px "PingFang SC", sans-serif`;g.fillText(s,x,y)}
+function card(id,x,y,w,h,p){g.save();g.globalAlpha=p;g.translate(0,(1-p)*45);g.fillStyle='#151515';g.beginPath();g.roundRect(x,y,w,h,18);g.fill();g.strokeStyle='#383838';g.lineWidth=2;g.stroke();const im=imgs[id],s=Math.min((w-16)/im.width,(h-16)/im.height),iw=im.width*s,ih=im.height*s;g.drawImage(im,x+(w-iw)/2,y+(h-ih)/2,iw,ih);g.restore()}
+window.seek=t=>{g.fillStyle='#080808';g.fillRect(0,0,1920,1080);let n=Math.min(3,Math.floor(t/3.25)),local=t-n*3.25;
+text('模型例图速览',88,105,35,'#aaa',500);for(let j=0;j<4;j++){let x=1260+j*145;g.fillStyle=j===n?'#f2f2f2':'#181818';g.beginPath();g.roundRect(x,62,120,57,28);g.fill();text(names[j],x+28,101,29,j===n?'#101010':'#777',600)}
+g.strokeStyle='#292929';g.lineWidth=2;g.beginPath();g.moveTo(88,146);g.lineTo(1832,146);g.stroke();let p=ease(local/.4);g.save();g.globalAlpha=p;text(names[n],88,244,68);text(sub[n],267,238,29,'#999',400);text('生成模型：'+['Lib Image 2.5 Pro','Style Image V8.2','General image V2.1','Style Image V8.2'][n],1080,238,35,'#eee',500);g.restore();
+let ids=groups[n];if(n===0){card(ids[0],450,280,1020,590,ease(local/.5))}else{card(ids[0],735,280,450,590,ease(local/.5))}
+// Bottom 190 pixels intentionally remain clear for narration subtitles.
+};window.ready.then(()=>window.seek(0));</script>

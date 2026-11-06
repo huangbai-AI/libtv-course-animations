@@ -1,0 +1,33 @@
+<!doctype html><meta charset="utf-8"><title>Prompt 是给模型的指令 · 黑底版</title><style>html,body{margin:0;background:#080808;overflow:hidden}canvas{display:block;filter:grayscale(1)}</style><canvas id="c" width="1920" height="1080"></canvas>
+<script>
+const c=document.querySelector('canvas'),g=c.getContext('2d');
+const C={bg:'#080808',ink:'#F5F5F5',sub:'#AAAAAA',purple:'#FFFFFF',light:'#2B2B2B',white:'#191919'};
+const clamp=x=>Math.max(0,Math.min(1,x)),ease=x=>1-Math.pow(1-clamp(x),3),mix=(a,b,p)=>a+(b-a)*p;
+function rr(x,y,w,h,r,fill,stroke){g.beginPath();g.roundRect(x,y,w,h,r);if(fill){g.fillStyle=fill;g.fill()}if(stroke){g.strokeStyle=stroke;g.lineWidth=3;g.stroke()}}
+function txt(s,x,y,size=36,color=C.ink,weight=500,align='left'){g.fillStyle=color;g.font=`${weight} ${size}px "PingFang SC","Arial",sans-serif`;g.textAlign=align;g.textBaseline='middle';g.fillText(s,x,y)}
+function line(points,color=C.purple,width=5){g.beginPath();g.moveTo(...points[0]);points.slice(1).forEach(p=>g.lineTo(...p));g.strokeStyle=color;g.lineWidth=width;g.lineCap='round';g.lineJoin='round';g.stroke()}
+function scene(x,y,w,h){g.save();g.beginPath();g.roundRect(x,y,w,h,16);g.clip();let grd=g.createLinearGradient(0,y,0,y+h);grd.addColorStop(0,'#E0DAF5');grd.addColorStop(1,'#F3EDE7');g.fillStyle=grd;g.fillRect(x,y,w,h);g.fillStyle='#C4B8E3';g.beginPath();g.moveTo(x,y+h);g.lineTo(x+w*.35,y+h*.3);g.lineTo(x+w*.65,y+h);g.fill();g.fillStyle='#9E8FC8';g.beginPath();g.moveTo(x+w*.25,y+h);g.lineTo(x+w*.72,y+h*.2);g.lineTo(x+w,y+h*.8);g.lineTo(x+w,y+h);g.fill();g.fillStyle='#FFF8E8';g.beginPath();g.arc(x+w*.22,y+h*.25,14,0,7);g.fill();g.restore()}
+function alpha(a,fn){g.save();g.globalAlpha=clamp(a);fn();g.restore()}
+window.seek=function(t){g.clearRect(0,0,1920,1080);g.fillStyle=C.bg;g.fillRect(0,0,1920,1080);
+ g.strokeStyle='#242424';g.lineWidth=2;g.beginPath();g.arc(1930,-90,390,0,7);g.stroke();g.strokeStyle='#111111';g.lineWidth=72;g.beginPath();g.arc(-120,1140,340,0,7);g.stroke();
+ const m=ease((t-3.7)/1.0),enter=ease(t/.7);
+ alpha(enter,()=>{txt('提示词',mix(843,140,m),mix(360,118,m),mix(78,58,m),C.ink,650,'left')});
+ alpha(ease((t-.8)/.65),()=>{txt('Prompt',mix(749,390,m),mix(492,118,m),mix(118,60,m),C.purple,700,'left')});
+ alpha(ease((t-1.9)/.65)*(1-m),()=>{rr(660,610,600,96,26,C.light);txt('给模型的指令',960,658,46,C.purple,600,'center')});
+ alpha(m,()=>{txt('给模型的指令',1778,118,38,C.sub,500,'right');line([[140,187],[1780,187]],'#303030',2)});
+ const base=ease((t-4.3)/.7);alpha(base,()=>{rr(1288,390,435,310,40,C.light);rr(1330,432,351,226,28,C.white);txt('模型',1506,537,62,C.purple,650,'center');txt('理解你的意图',1506,608,30,C.sub,500,'center');
+ // Small chip contacts, orderly not decorative circuitry.
+ for(let i=0;i<3;i++){line([[1268,473+i*50],[1288,473+i*50]],'#AD9FDC',5);line([[1723,473+i*50],[1743,473+i*50]],'#AD9FDC',5)} });
+ const starts=[4.7,7.2,9.3],ys=[254,466,678],names=['文字','图片','标注'];
+ starts.forEach((s,i)=>{let a=ease((t-s)/.65),y=ys[i]+(1-a)*28;alpha(a,()=>{
+ g.shadowColor='rgba(0,0,0,.3)';g.shadowBlur=24;g.shadowOffsetY=8;rr(142,y,780,176,26,C.white,'#353535');g.shadowColor='transparent';rr(174,y+34,108,108,22,C.light);
+ if(i===0){txt('T',228,y+88,64,C.purple,650,'center');txt('文字',316,y+54,32,C.sub);txt('让画面更温暖',316,y+111,40,C.ink,600)}
+ if(i===1){scene(184,y+47,88,82);txt('图片',316,y+54,32,C.sub);scene(316,y+84,160,68);txt('参考色调与构图',508,y+118,36,C.ink,600)}
+ if(i===2){g.strokeStyle=C.purple;g.lineWidth=5;g.beginPath();g.ellipse(228,y+87,34,28,-.2,0,7);g.stroke();line([[248,y+108],[269,y+130]],C.purple,5);txt('标注',316,y+54,32,C.sub);txt('把这里作为重点',316,y+111,40,C.ink,600);let ring=clamp((t-s-.5)/.9);g.beginPath();g.ellipse(375,y+111,71,35,-.08,-Math.PI/2,-Math.PI/2+Math.PI*2*ring);g.strokeStyle=C.purple;g.lineWidth=3;g.stroke()}
+ });
+ let p=ease((t-s-.5)/.9);alpha(p,()=>{const yy=ys[i]+88;g.beginPath();g.moveTo(950,yy);g.bezierCurveTo(1080,yy,1100,545,1250,545);g.strokeStyle='#626262';g.lineWidth=5;g.stroke();line([[1237,533],[1251,545],[1237,557]],C.purple,4)});
+ let travel=clamp((t-s-1.0)/1.5);if(travel>0&&travel<1)alpha(Math.sin(travel*Math.PI),()=>{let p=travel,x=Math.pow(1-p,3)*950+3*Math.pow(1-p,2)*p*1080+3*(1-p)*p*p*1100+p*p*p*1250,yy=Math.pow(1-p,3)*(ys[i]+88)+3*Math.pow(1-p,2)*p*(ys[i]+88)+3*(1-p)*p*p*545+p*p*p*545;g.fillStyle=C.purple;g.beginPath();g.arc(x,yy,9,0,7);g.fill()});
+ });
+ // Bottom 200px reserved for editor-added narration subtitles. No footer copy.
+};window.seek(0);
+</script>

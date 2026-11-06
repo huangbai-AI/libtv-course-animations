@@ -1,0 +1,13 @@
+<!doctype html><meta charset="utf-8"><style>body{margin:0;background:#080808}canvas{display:block}</style><canvas width="1920" height="1080"></canvas><script>
+const g=document.querySelector('canvas').getContext('2d');window.ready=Promise.resolve();const ease=x=>1-(1-Math.max(0,Math.min(1,x)))**3;const titles=['生成模式','模型对比','提示词写法','快捷工具','声音生成节点'];
+function tx(s,x,y,z=32,c='#eee',align='left'){g.font=`600 ${z}px "PingFang SC",sans-serif`;g.fillStyle=c;g.textAlign=align;g.fillText(s,x,y)}
+function box(x,y,w,h,r,fill,stroke){g.beginPath();g.roundRect(x,y,w,h,r);if(fill){g.fillStyle=fill;g.fill()}if(stroke){g.strokeStyle=stroke;g.lineWidth=3;g.stroke()}}
+function path(points){g.beginPath();points.forEach((p,i)=>i?g.lineTo(...p):g.moveTo(...p));g.stroke()}
+function icon(j,x,y){g.save();g.translate(x,y);g.strokeStyle='#eee';g.lineWidth=5;g.lineCap='round';g.lineJoin='round';if(j===0){box(-50,-40,58,70,8,null,'#eee');box(-7,-9,58,70,8,'#181818','#eee');path([[2,46],[18,20],[40,46]]);}if(j===1){box(-61,-37,51,88,8,null,'#eee');box(10,-37,51,88,8,null,'#eee');path([[-48,-14],[-24,-14]]);path([[23,-14],[47,-14]]);path([[-48,5],[-24,5]]);path([[23,5],[47,5]])}if(j===2){box(-61,-39,122,92,10,null,'#eee');path([[-39,-15],[-16,4],[-39,23]]);path([[0,27],[35,27]])}if(j===3){path([[12,-53],[-38,13],[-4,13],[-12,62],[43,-9],[10,-9],[12,-53]])}if(j===4){box(-20,-51,40,72,20,null,'#eee');g.beginPath();g.arc(0,5,38,0,Math.PI);g.stroke();path([[0,43],[0,65]]);path([[-25,65],[25,65]])}g.restore()}
+window.seek=t=>{g.fillStyle='#080808';g.fillRect(0,0,1920,1080);tx('这节课，我们会讲到',105,145,58);tx('LibTV 课程导览',1810,141,27,'#777','right');g.strokeStyle='#2b2b2b';g.lineWidth=2;path([[105,190],[1810,190]]);
+let current=Math.min(4,Math.floor(t/2.5));let all=t>=12.5;
+for(let j=0;j<5;j++){let x=230+j*365,p=ease((t-j*2.5)/.55),bright=j<=current; if(j<4){g.strokeStyle='#292929';g.lineWidth=4;path([[x+125,470],[x+240,470]]);let q=ease((t-(j+1)*2.5)/.7);if(q>0){g.strokeStyle='#ddd';path([[x+125,470],[x+125+115*q,470]])}}
+g.save();g.globalAlpha=bright?1:.18;let yy=470+(1-p)*15;box(x-125,yy-135,250,270,28,bright?'#181818':'#101010',bright?'#777':'#333');if(j===current||all){g.shadowColor='#ffffff20';g.shadowBlur=30;box(x-125,yy-135,250,270,28,null,'#eee');g.shadowBlur=0}icon(j,x,yy-15);tx(titles[j],x,660,j===4?35:39,bright?'#f5f5f5':'#888','center');g.restore()}
+let p=ease((t%2.5)/.5);if(!all){g.save();g.globalAlpha=p;box(105,744,1710,64,16,'#161616');const notes=['认识不同的生成方式','观察不同模型的效果','学会表达你的创作需求','熟悉常用快捷工具','了解声音生成节点'];tx(notes[current],960,786,30,'#bbb','center');g.restore()}
+};window.seek(0);
+</script>
